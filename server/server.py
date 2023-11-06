@@ -30,7 +30,7 @@ coordinates = "%.2f, %.2f" % (getLoc.latitude, getLoc.longitude)
 url = "https://weatherapi-com.p.rapidapi.com/current.json"
 querystring = {"q": coordinates} # College Station, TX Latitude and Longitude Coordinates
 headers = {
-  "X-RapidAPI-Key": "cdc0c19252msh6449b7b29d1bb94p1dcf61jsn236a7bab7b74",
+  "X-RapidAPI-Key": "",
   "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
 }
 response = requests.get(url, headers=headers, params=querystring)
