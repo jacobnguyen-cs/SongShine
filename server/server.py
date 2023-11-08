@@ -26,7 +26,7 @@ def index():
 
 @app.route('/login')
 def login():
-  scope = 'user-read-private'
+  scope = 'user-read-private user-top-read'
   params = {
     'client_id': client_id,
     'response_type': 'code',
@@ -60,10 +60,10 @@ def callback():
     session['refresh_token'] = token_info['refresh_token']
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect('/playlists')
+    return redirect('/artists')
   
-@app.route('/playlists')
-def get_playlists():
+@app.route('/artists')
+def get_artists():
   if 'access_token' not in session:
     return redirect('/login')
   
@@ -74,10 +74,10 @@ def get_playlists():
     'Authorization' : f"Bearer {session['access_token']}"
   }
 
-  response = requests.get(API_BASE_URL + '/me/playlists', headers=headers)
-  playlists = response.json()
+  response = requests.get(API_BASE_URL + '/me/top/artists', headers=headers)
+  artists = response.json()
 
-  return playlists
+  return artists
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -98,7 +98,7 @@ def refresh_token():
     session['access_token'] = new_token_info['access_token']
     session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
 
-    return redirect('/playlists')
+    return redirect('/artists')
 
 # ### Get coordinates ###
 # loc = Nominatim(user_agent="GetLoc")
