@@ -1,60 +1,104 @@
-from flask import Flask, jsonify        # pip install 
-from flask_cors import CORS             # pip install flask_cors
-from geopy.geocoders import Nominatim   # pip install geopy
-from dotenv import load_dotenv          # pip install python-dotenv
-import requests                         # pip install requests
+from flask import Flask, jsonify, redirect, request, session        # pip install flask
+from flask_cors import CORS                                         # pip install flask_cors
+from geopy.geocoders import Nominatim                               # pip install geopy
+from dotenv import load_dotenv                                      # pip install python-dotenv
+from datetime import datetime
+import requests                                                     # pip install requests
 import os
-import base64                           # for encoding
-import json
+import urllib.parse
 
 app = Flask(__name__)
+app.secret_key = "s4zqSdQoqb2tR8RB"
 CORS(app)
 
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
+REDIRECT_URI = "http://localhost:8080/callback"
 
-def get_token():
-  auth_string = client_id + ":" + client_secret
-  auth_bytes = auth_string.encode("utf-8")
-  auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+AUTH_URL = "https://accounts.spotify.com/authorize"
+TOKEN_URL = "https://accounts.spotify.com/api/token"
+API_BASE_URL = "https://api.spotify.com/v1"
 
-  url = "https://accounts.spotify.com/api/token"
-  headers = {
-    "Authorization": "Basic " + auth_base64,
-    "Content-Type": "application/x-www-form-urlencoded"
+@app.route('/')
+def index():
+  return "Welcome to SongShine <a href='/login'>Login with Spotify</a>"
+
+@app.route('/login')
+def login():
+  scope = 'user-read-private'
+  params = {
+    'client_id': client_id,
+    'response_type': 'code',
+    'scope': scope,
+    'redirect_uri': REDIRECT_URI,
+    'show_dialog': True
   }
-  data = {"grant_type": "client_credentials"}
-  result = requests.post(url, headers=headers, data=data)
-  json_result = json.loads(result.content)
-  token = json_result["access_token"]
-  return token
 
-def get_auth_header(token):
-  return {"Authorization" : "Bearer " + token}
+  auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
 
-### WORKS ###
-# def search_for_aritst(token, artist_name):
-#   url = "https://api.spotify.com/v1/search"
-#   headers = get_auth_header(token)
-#   query = f"?q={artist_name}&type=artist&limit=1"
+  return redirect(auth_url)
 
-#   query_url = url + query
-#   result = requests.get(query_url, headers=headers)
-#   json_result = json.loads(result.content)
-#   return json_result
+@app.route('/callback')
+def callback():
+  if 'error' in request.args:
+    return jsonify({"error": request.args["error"]})
+  
+  if 'code' in request.args:
+    req_body = {
+      'code': request.args['code'],
+      'grant_type': 'authorization_code',
+      'redirect_uri' : REDIRECT_URI,
+      'client_id': client_id,
+      'client_secret': client_secret
+    }
 
-### NOT WORKING ###
-# def get_top_artists(token):
-#   url = "https://api.spotify.com/v1/me/top/artists"
-#   headers = get_auth_header(token)
-#   result_byte = requests.get(url, headers=headers)
-#   result_string = str(result_byte)
-#   return result_string
+    response = requests.post(TOKEN_URL, data=req_body)
+    token_info = response.json()
 
-token = get_token()
-# print(search_for_aritst(token, "Hozier"))
-# print(get_top_artists(token))
+    session['access_token'] = token_info['access_token']
+    session['refresh_token'] = token_info['refresh_token']
+    session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
+
+    return redirect('/playlists')
+  
+@app.route('/playlists')
+def get_playlists():
+  if 'access_token' not in session:
+    return redirect('/login')
+  
+  if datetime.now().timestamp() > session['expires_at']:
+    return redirect('/refresh-token')
+  
+  headers = {
+    'Authorization' : f"Bearer {session['access_token']}"
+  }
+
+  response = requests.get(API_BASE_URL + '/me/playlists', headers=headers)
+  playlists = response.json()
+
+  return playlists
+
+@app.route('/refresh-token')
+def refresh_token():
+  if 'refresh_token' not in session:
+    return redirect('/login')
+  
+  if datetime.now().timestamp() > session['expires_at']:
+    req_body = {
+      'grant_type': 'refresh_token',
+      'refresh_token': session['refresh_token'],
+      'client_id': client_id,
+      'client_secret': client_secret
+    }
+
+    response = requests.post(TOKEN_URL, data=req_body)
+    new_token_info = response.json()
+
+    session['access_token'] = new_token_info['access_token']
+    session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
+
+    return redirect('/playlists')
 
 # ### Get coordinates ###
 # loc = Nominatim(user_agent="GetLoc")
