@@ -8,7 +8,7 @@ import os
 import urllib.parse
 
 app = Flask(__name__)
-app.secret_key = "s4zqSdQoqb2tR8RB"
+app.secret_key = ""
 CORS(app)
 
 load_dotenv()
