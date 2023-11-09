@@ -3,12 +3,16 @@ from flask_cors import CORS                                         # pip instal
 from geopy.geocoders import Nominatim                               # pip install geopy
 from dotenv import load_dotenv                                      # pip install python-dotenv
 from datetime import datetime
+from collections import defaultdict
+
 import requests                                                     # pip install requests
 import os
 import urllib.parse
+import random
+import string
 
 app = Flask(__name__)
-app.secret_key = ""
+app.secret_key = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
 CORS(app)
 
 load_dotenv()
@@ -60,10 +64,10 @@ def callback():
     session['refresh_token'] = token_info['refresh_token']
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect('/artists')
+    return redirect('/top_items')
   
-@app.route('/artists')
-def get_artists():
+@app.route('/top_items')
+def get_top_items():
   if 'access_token' not in session:
     return redirect('/login')
   
@@ -74,10 +78,18 @@ def get_artists():
     'Authorization' : f"Bearer {session['access_token']}"
   }
 
-  response = requests.get(API_BASE_URL + '/me/top/artists', headers=headers)
-  artists = response.json()
+  response = requests.get(API_BASE_URL + '/me/top/artists?time_range=medium_term&limit=50', headers=headers)
+  response = response.json()
 
-  return artists
+  top_items = []
+  for item in response["items"]:
+    top_items.append({
+      "id": item["id"],
+      "name": item["name"],
+      "genres": item["genres"]
+    })
+
+  return jsonify({ "top_items": top_items })
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -98,7 +110,7 @@ def refresh_token():
     session['access_token'] = new_token_info['access_token']
     session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
 
-    return redirect('/artists')
+    return redirect('/top_items')
 
 # ### Get coordinates ###
 # loc = Nominatim(user_agent="GetLoc")
