@@ -131,18 +131,3 @@ def refresh_token():
 
 if __name__ == "__main__":
   app.run(debug=True, port=8080)
-
-### SAMPLE CODE For HTTP Requests ###
-# @app.route("/", methods=['GET'])
-# def home():
-#   url = "https://weatherapi-com.p.rapidapi.com/current.json"
-#   loc = Nominatim(user_agent="GetLoc")
-#   getLoc = loc.geocode("College Station")
-#   coordinates = "%.2f, %.2f" % (getLoc.latitude, getLoc.longitude)
-#   querystring = {"q": coordinates} # College Station, TX Latitude and Longitude Coordinates
-#   headers = {
-#     "X-RapidAPI-Key": "",
-#     "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
-#   }
-#   response = requests.get(url, headers=headers, params=querystring)
-#   return response.json()
