@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="100x100" href="./imgs/SongShine_logo.png">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>SongShine - Weather Based Song Recommender</title>
+</head>
+<body>
+    <section class = "navbar">
+        <div class = "navbar--wrapper">
+            <img src="./imgs/SongShine_logo.png" class = "songshine--logo" alt="SongShine logo">
+            <ul class = "navbar--links">
+                <li><a href="#" class="navbar--link single about">About</a></li>
+                <li><a href="#" class="navbar--link single apis">APIs</a></li>
+                <li><a href="#" class="navbar--link single credits">Credits</a></li>
+                <li class="divider">|</li>
+                <a href="#" class="navbar--link" ><button class ="logout--btn">Log Out</button></a>
+            </ul>
+        </div>
+    </section>
+    <section class = "main">
+        <h1 class = "greetings"> Good Morning, <span class = "username">Jacob</span>!</h1>
+        <div class="hero--section">
+            <p class = "hero--text">Let's get your location to get you song recommendations based on the weather around you!</p>
+            <button class = "hero--btn">Locate Me!</button>
+        </div>
+        <div class="weather--widget">
+            <div class="weather-card">
+                <img src="./imgs/368.png" class = "weather--img"alt="">
+                <div class="weather--info">
+                    <p class="weather--text">Location: <span class="default--vals location">---</span></p>
+                    <p class="weather--text">Temperature: <span class="default--vals temperature">---</span></p>
+                    <p class="weather--text">Feels Like: <span class="default--vals feels-like">---</span></p>
+                    <p class="weather--text">Weather Condition: <span class="default--vals weather-condition">---</span></p>
+                </div>
+
+            </div>
+        </div>
+        <div class="genre--section">
+            <p class="genre--title">Here are your favorite genres from your spotify playlist, which genre of song do you want recommendations for?</p>
+            <div class="genre-btns">
+                <button class="gere-btns">Genre #1</button>
+                <button class="gere-btns">Genre #2</button>
+                <button class="gere-btns">Genre #3</button>
+                <button class="gere-btns">Genre #4</button>
+                <button class="gere-btns">Genre #5</button>
+            </div>
+        </div>
+    </section>
+    <script src = "app.js"></script>
+</body>
+</html>
