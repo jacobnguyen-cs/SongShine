@@ -114,19 +114,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const aboutLink = document.querySelector(".navbar--link.about");
     aboutLink.addEventListener("click", function () {
-        const aboutContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget justo id augue ullamcorper consequat.<br><br>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+        const aboutContent = "SongShine is a weather-based music recommender application. Given the current weather (sunny, gloomy, hot, cold, etc.) and a specified genre, our application will recommend 5 songs. The application will take into account components of your Spotify account, including top artists from the last month, top tracks from the last month, and contents in your playlists.";
         openPopup("About", aboutContent);
     });
 
     const apisLink = document.querySelector(".navbar--link.apis");
     apisLink.addEventListener("click", function () {
-        const apisContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget justo id augue ullamcorper consequat.<br><br>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+        const apisContent = "Three APIs were used to build this application. The first - a weather API was used to find the precise geolocation for a given user and based on that information, output and store the current temperature, what temperature it feels like, and a general weather condition for this location. The second API we used was a Spotify API to track the logged in user's account information including their account name, top artists and tracks from the last month, and contents of their playlists. The final API that we used was a ChatGPT API. This allowed us to take the learned information of the weather in the user's current location, pair that with a specified genre, and ultimately recommend a list of songs that the user will hopefully enjoy.";
         openPopup("APIs", apisContent);
     });
 
     const creditsLink = document.querySelector(".navbar--link.credits");
     creditsLink.addEventListener("click", function () {
-        const creditsContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget justo id augue ullamcorper consequat.<br><br>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+        const creditsContent = "weatherapi.com - weather API<br><br>Spotify - Spotify API<br><br> OpenAI - ChatGPT API";
         openPopup("Credits", creditsContent);
     });
 
