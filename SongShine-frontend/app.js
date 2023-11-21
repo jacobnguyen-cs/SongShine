@@ -135,3 +135,29 @@ document.addEventListener("DOMContentLoaded", function () {
         getLocation();
     });
 });
+
+// // OpenAI API section
+// require('dotenv').config();
+// const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+// const fetch = require('node-fetch');
+
+// async function getSongRecommendations(weatherData) {
+//     const openaiEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+//     const prompt = `Given the current weather is ${weatherData}, recommend five songs.`;
+
+//     const response = await fetch(openaiEndpoint, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${OPENAI_API_KEY}`,
+//         },
+//         body: JSON.stringify({
+//             prompt,
+//             max_tokens: 100, // Adjust as needed
+//             n: 5, // Number of songs to recommend
+//         }),
+//     });
+
+//     const data = await response.json();
+//     return data.choices.map(choice => choice.text.trim());
+// }
