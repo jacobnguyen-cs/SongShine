@@ -28,7 +28,7 @@ genres_count = defaultdict(int)
 
 @app.route('/')
 def index():
-  return render_template('index.html', genres_count=genres_count)
+  return render_template('index.html', genres=genres_count, n=len(genres_count))
 
 @app.route('/login')
 def login():
@@ -122,7 +122,8 @@ def get_top_genres(top_items):
       global genres_count
       genres_count[genre] += 1
 
-  genres_count = dict(sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)[:5])
+  genres_count = sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)[:5]
+  print(genres_count)
 
 if __name__ == "__main__":
   app.run(debug=True, port=8080)

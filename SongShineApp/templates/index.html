@@ -50,8 +50,8 @@
                 <button class="gere-btns">Genre #3</button>
                 <button class="gere-btns">Genre #4</button>
                 <button class="gere-btns">Genre #5</button> -->
-                {% for genre, count in genres_count.items() %}
-                    <button class="gere-btns">{{ genre }}</button>
+                {% for i in range(n) %}
+                    <button class="gere-btns" id="genre-btn-{{i}}">{{ genres[i][0] }}</button>
                 {% endfor %}
             </div>
         </div>

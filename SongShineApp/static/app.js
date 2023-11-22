@@ -140,11 +140,22 @@ document.getElementById('loginButton').addEventListener('click', () => {
     window.location.href = 'http://localhost:8080/login';
 });
 
-document.getElementById('topItemsButton').addEventListener('click', () => {
-    fetch('http://localhost:8080/top_items')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Top Items:', data);
-        })
-        .catch(error => console.error('Error fetching top items:', error));
+document.getElementById('genre-btn-0').addEventListener('click', () => {
+    console.log('button0');
+});
+
+document.getElementById('genre-btn-1').addEventListener('click', () => {
+    console.log('button1');
+});
+
+document.getElementById('genre-btn-2').addEventListener('click', () => {
+    console.log('button2');
+});
+
+document.getElementById('genre-btn-3').addEventListener('click', () => {
+    console.log('button3');
+});
+
+document.getElementById('genre-btn-4').addEventListener('click', () => {
+    console.log('button4');
 });
