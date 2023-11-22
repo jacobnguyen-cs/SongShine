@@ -135,3 +135,16 @@ document.addEventListener("DOMContentLoaded", function () {
         getLocation();
     });
 });
+
+document.getElementById('loginButton').addEventListener('click', () => {
+    window.location.href = 'http://localhost:8080/login';
+});
+
+document.getElementById('topItemsButton').addEventListener('click', () => {
+    fetch('http://localhost:8080/top_items')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Top Items:', data);
+        })
+        .catch(error => console.error('Error fetching top items:', error));
+});

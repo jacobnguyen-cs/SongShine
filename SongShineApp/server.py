@@ -1,11 +1,10 @@
-from flask import Flask, jsonify, redirect, request, session        # pip install flask
-from flask_cors import CORS                                         # pip install flask_cors
-from geopy.geocoders import Nominatim                               # pip install geopy
-from dotenv import load_dotenv                                      # pip install python-dotenv
+from flask import Flask, jsonify, redirect, request, session, render_template, url_for
+from flask_cors import CORS
+from dotenv import load_dotenv
 from datetime import datetime
 from collections import defaultdict
 
-import requests                                                     # pip install requests
+import requests
 import os
 import urllib.parse
 import random
@@ -26,7 +25,7 @@ API_BASE_URL = "https://api.spotify.com/v1"
 
 @app.route('/')
 def index():
-  return "Welcome to SongShine <a href='/login'>Login with Spotify</a>"
+  return render_template('index.html')
 
 @app.route('/login')
 def login():
@@ -64,7 +63,7 @@ def callback():
     session['refresh_token'] = token_info['refresh_token']
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect('/top_items')
+    return redirect(url_for('index'))
   
 @app.route('/top_items')
 def get_top_items():
@@ -111,23 +110,6 @@ def refresh_token():
     session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
 
     return redirect('/top_items')
-
-# ### Get coordinates ###
-# loc = Nominatim(user_agent="GetLoc")
-# getLoc = loc.geocode("College Station")
-# coordinates = "%.2f, %.2f" % (getLoc.latitude, getLoc.longitude)
-
-# ### GET Request to WeatherAPI with  coordinates ###
-# url = "https://weatherapi-com.p.rapidapi.com/current.json"
-# querystring = {"q": coordinates} # College Station, TX Latitude and Longitude Coordinates
-# headers = {
-#   "X-RapidAPI-Key": "",
-#   "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
-# }
-# response = requests.get(url, headers=headers, params=querystring)
-
-# # print(response.json())
-# print(response.json()["current"]["condition"])
 
 if __name__ == "__main__":
   app.run(debug=True, port=8080)

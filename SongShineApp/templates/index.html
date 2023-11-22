@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="100x100" href="./imgs/SongShine_logo.png">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" type="image/png" sizes="100x100" href="../static/imgs/SongShine_logo.png">
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,13 +14,13 @@
 <body>
     <section class = "navbar">
         <div class = "navbar--wrapper">
-            <img src="./imgs/SongShine_logo.png" class = "songshine--logo" alt="SongShine logo">
+            <img src="../static/imgs/SongShine_logo.png" class = "songshine--logo" alt="SongShine logo">
             <ul class = "navbar--links">
                 <li><a href="#" class="navbar--link single about">About</a></li>
                 <li><a href="#" class="navbar--link single apis">APIs</a></li>
                 <li><a href="#" class="navbar--link single credits">Credits</a></li>
                 <li class="divider">|</li>
-                <a href="#" class="navbar--link" ><button class ="logout--btn">Log Out</button></a>
+                <a href="#" class="navbar--link" ><button class ="logout--btn" id="loginButton">Log In</button></a>
             </ul>
         </div>
     </section>
@@ -32,7 +32,7 @@
         </div>
         <div class="weather--widget">
             <div class="weather-card">
-                <img src="./imgs/368.png" class = "weather--img"alt="">
+                <img src="../static/imgs/368.png" class = "weather--img"alt="">
                 <div class="weather--info">
                     <p class="weather--text">Location: <span class="default--vals location">---</span></p>
                     <p class="weather--text">Temperature: <span class="default--vals temperature">---</span></p>
@@ -50,9 +50,10 @@
                 <button class="gere-btns">Genre #3</button>
                 <button class="gere-btns">Genre #4</button>
                 <button class="gere-btns">Genre #5</button>
+                <button class="gere-btns" id="topItemsButton">Get Top Artists</button>
             </div>
         </div>
     </section>
-    <script src = "app.js"></script>
+    <script src = "../static/app.js"></script>
 </body>
 </html>
