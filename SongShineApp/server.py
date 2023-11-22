@@ -9,6 +9,7 @@ import os
 import urllib.parse
 import random
 import string
+import operator
 
 app = Flask(__name__)
 app.secret_key = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
@@ -23,9 +24,11 @@ AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1"
 
+genres_count = defaultdict(int)
+
 @app.route('/')
 def index():
-  return render_template('index.html')
+  return render_template('index.html', genres_count=genres_count)
 
 @app.route('/login')
 def login():
@@ -63,7 +66,7 @@ def callback():
     session['refresh_token'] = token_info['refresh_token']
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect(url_for('index'))
+    return redirect('/top_items')
   
 @app.route('/top_items')
 def get_top_items():
@@ -88,7 +91,9 @@ def get_top_items():
       "genres": item["genres"]
     })
 
-  return jsonify({ "top_items": top_items })
+  get_top_genres(top_items)
+
+  return redirect('/')
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -109,7 +114,15 @@ def refresh_token():
     session['access_token'] = new_token_info['access_token']
     session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
 
-    return redirect('/top_items')
+    return jsonify({'message': 'Token refreshed'})
+  
+def get_top_genres(top_items):
+  for item in top_items:
+    for genre in item['genres']:
+      global genres_count
+      genres_count[genre] += 1
+
+  genres_count = dict(sorted(genres_count.items(), key=operator.itemgetter(1), reverse=True)[:5])
 
 if __name__ == "__main__":
   app.run(debug=True, port=8080)
