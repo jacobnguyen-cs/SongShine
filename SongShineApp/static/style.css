@@ -26,6 +26,7 @@ body{
     gap:2rem;
     font-size:1.15rem;
 }
+
 .logout--btn{
   background-color: #ffffff;
   color: #000000;
@@ -36,6 +37,7 @@ body{
   border-radius: 40px;
   cursor: pointer;
 }
+
 .main{
     padding:1rem 2rem;
     display:flex;
@@ -76,6 +78,8 @@ body{
 .logout--btn:hover{
     background-color:#1db954;
 }
+
+
 .divider {
     font-weight:600;
 }
@@ -249,6 +253,12 @@ a{
   visibility: hidden;
 }
 
+.song-recommendations {
+  display: none;
+  justify-content: center;
+  visibility: hidden;
+}
+
 .top-items-btn {
   background-color: #1db954;
   color: #000000;
@@ -295,31 +305,57 @@ a{
 }
 
 .loader {
-    transform: rotateZ(45deg);
-    perspective: 1000px;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    color: #fff;
-  }
-    .loader:before,
-    .loader:after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: inherit;
-      height: inherit;
-      border-radius: 50%;
-      transform: rotateX(70deg);
-      animation: 1s spin linear infinite;
-    }
-    .loader:after {
-      color: #1db954;
-      transform: rotateY(70deg);
-      animation-delay: .4s;
-    }
+  transform: rotateZ(45deg);
+  perspective: 1000px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  color: #fff;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+  border-radius: 50%;
+  transform: rotateX(70deg);
+  animation: 1s spin linear infinite;
+}
+.loader:after {
+  color: #1db954;
+  transform: rotateY(70deg);
+  animation-delay: .4s;
+}
+  
+/* .song-recommendations {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.song-recommendations h2 {
+    color: #1db954;
+}
+
+.song-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.song-list li {
+  background-color: #535353;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  color: white;
+  margin: 5px;
+} */
+
 
   @keyframes rotate {
     0% {

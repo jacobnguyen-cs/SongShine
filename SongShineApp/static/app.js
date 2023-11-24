@@ -156,6 +156,8 @@ function displayTopGenres(topGenres) {
     console.log('In displayTopGenres function.');
 
     const genreButtonsContainer = document.querySelector('.genre-btns');
+    const songRecsContainer = document.querySelector('.song-recommendations');
+    const songRecHeader = document.querySelector('.songRecHeader');
 
     const genreButtons = document.querySelectorAll('.gere-btns');
     console.log("Genre buttons intitially:", genreButtons);
@@ -168,7 +170,27 @@ function displayTopGenres(topGenres) {
             button.style.display = 'block';
             button.textContent = genre;
         }
+        
+        button.addEventListener('click', () => {
+            console.log('Clicked a genre button');
+
+            const songRecommendations = [`Song 1`, `Song 2`, `Song 3`, `Song 4`, `Song 5`];
+            const songList = document.querySelector('.song-list');
+            songList.innerHTML = '';
+            songRecommendations.forEach((song, index) => {
+                const songItem = document.createElement('li');
+                songItem.classList.add('artist-item');
+                songItem.textContent = song;
+                songItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${song}</span>`
+                songList.appendChild(songItem);
+            });
+            songRecsContainer.style.visibility = 'visible';
+            songRecsContainer.style.display = 'flex';
+            songRecsContainer.style.flexDirection = 'column';
+            songRecHeader.style.margin = '20px';
+        })
     });
+
     genreIntroText.textContent = "Here are your favorite genres from the last 50 days. Select which genre of music you want recommendations for.";
     genreButtonsContainer.style.visibility = 'visible';
     genreButtonsContainer.style.display = 'flex';
@@ -192,3 +214,12 @@ function displayTopArtists(topArtists) {
         artistList.appendChild(listItem);
     });
 }
+
+// document.getElementById('getRecommendationsButton').addEventListener('click', () => {
+//     fetch('http://localhost:8080/get_recommendations')
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log('ChatGPT Recommendations:', data.recommendations);
+//         })
+//         .catch(error => console.error('Error fetching recommendations', error));
+// });
