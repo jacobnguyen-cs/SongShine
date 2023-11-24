@@ -144,13 +144,39 @@ document.getElementById('topItemsButton').addEventListener('click', () => {
         .then(response => response.json())
         .then(data => {
             console.log('Top Artists: ', data.top_items);
+            console.log('Top Genres:', data.top_genres);
             // console.log('Top Items:', data);
             displayTopArtists(data.top_items)
+            displayTopGenres(data.top_genres)
         })
         .catch(error => console.error('Error fetching top items:', error));
 });
 
+function displayTopGenres(topGenres) {
+    console.log('In displayTopGenres function.');
+
+    const genreButtonsContainer = document.querySelector('.genre-btns');
+
+    const genreButtons = document.querySelectorAll('.gere-btns');
+    console.log("Genre buttons intitially:", genreButtons);
+
+    const genreIntroText = document.getElementById('genreIntroText');
+
+    topGenres.forEach((genre, index) => {
+        const button = genreButtons[index];
+        if (button) {
+            button.style.display = 'block';
+            button.textContent = genre;
+        }
+    });
+    genreIntroText.textContent = "Here are your favorite genres from the last 50 days. Select which genre of music you want recommendations for.";
+    genreButtonsContainer.style.visibility = 'visible';
+    genreButtonsContainer.style.display = 'flex';
+}
+
 function displayTopArtists(topArtists) {
+    console.log('In displayTopArtists function.');
+
     const artistList = document.getElementById('artistList');
     if (!artistList) {
         console.error('Elemenet with id "artistList" not found');
@@ -162,8 +188,6 @@ function displayTopArtists(topArtists) {
     topArtists.slice(0, 10).forEach((artist, index) => {
         const listItem = document.createElement('li');
         listItem.classList.add('artist-item');
-
-        
         listItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${artist.name}</span> (${artist.genres.join(', ')})`;
         artistList.appendChild(listItem);
     });

@@ -235,11 +235,35 @@ a{
   border-radius: 10px;
   cursor: pointer;
   margin-right: 10px;
+  display: none;
 }
 .gere-btns:last-child {
   margin-right: 0px;
 }
 .gere-btns:hover{
+  background-color:#ffffff;
+}
+.genre-btns {
+  display: none;
+  justify-content: center;
+  visibility: hidden;
+}
+
+.top-items-btn {
+  background-color: #1db954;
+  color: #000000;
+  font-size: 1.15rem;
+  font-weight: bold;
+  padding: 8px 18px;
+  border: 0px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.top-items-btns:last-child {
+  margin-right: 0px;
+}
+.top-items-btns:hover{
   background-color:#ffffff;
 }
 
