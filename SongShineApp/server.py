@@ -2,7 +2,7 @@ from flask import Flask, jsonify, redirect, request, session, render_template, u
 from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 import requests
 import os
@@ -102,6 +102,8 @@ def get_top_items():
   response = response.json()
 
   top_items = []
+  genres = []
+
   for item in response["items"]:
     top_items.append({
       "id": item["id"],
@@ -109,7 +111,11 @@ def get_top_items():
       "genres": item["genres"]
     })
 
-  return jsonify({ "top_items": top_items })
+    genres.extend(item["genres"])
+  
+  top_genres = [genre for genre, _ in Counter(genres).most_common(5)]
+
+  return jsonify({ "top_items": top_items, "top_genres": top_genres })
 
 @app.route('/refresh-token')
 def refresh_token():
