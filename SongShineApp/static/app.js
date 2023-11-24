@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const apisLink = document.querySelector(".navbar--link.apis");
     apisLink.addEventListener("click", function () {
-        const apisContent = "Three APIs were used to build this application. The first - a weather API was used to find the precise geolocation for a given user and based on that information, output and store the current temperature, what temperature it feels like, and a general weather condition for this location. The second API we used was a Spotify API to track the logged in user's account information including their account name, top artists and tracks from the last month, and contents of their playlists. The final API that we used was a ChatGPT API. This allowed us to take the learned information of the weather in the user's current location, pair that with a specified genre, and ultimately recommend a list of songs that the user will hopefully enjoy.";
+        const apisContent = "Three APIs were used to build this application. The first - a weather API was used to find the precise geolocation for a given user and based on that information, output and store the current temperature, what temperature it feels like, and a general weather condition for this location. The second API we used was a Spotify API to track the logged in user's account information including their account name, top artists from the last 50 days, and top genres based on their top artists. The final API that we used was a ChatGPT API. This allowed us to take the learned information of the weather in the user's current location, pair that with a specified genre, and ultimately recommend a list of songs that the user will hopefully enjoy.";
         openPopup("APIs", apisContent);
     });
 
