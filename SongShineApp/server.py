@@ -69,6 +69,7 @@ def callback():
 
     response = requests.post(TOKEN_URL, data=req_body)
     token_info = response.json()
+    # print("TOKEN INFO:", token_info)
 
     # Fetch user profile
     headers = {
@@ -76,6 +77,7 @@ def callback():
     }
     user_response = requests.get(API_BASE_URL + '/me', headers=headers)
     user_data = user_response.json()
+    print("USER DATA:\n", user_data)
 
     session['access_token'] = token_info['access_token']
     session['refresh_token'] = token_info['refresh_token']

@@ -243,6 +243,33 @@ a{
   background-color:#ffffff;
 }
 
+.artist-item {
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+.artist-number {
+  margin-right: 10px;
+}
+.artist-name {
+  font-weight: bold;
+  font-size: 18px;
+  display: block;
+  margin-right:10px;
+}
+
+.section-divider {
+  margin-top: 20px;
+  border: none;
+  height: 3px;
+  background-color: #ddd;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .loader {
     transform: rotateZ(45deg);
     perspective: 1000px;
@@ -315,6 +342,3 @@ a{
       box-shadow: .2em -.2em 0 0 currentcolor;
     }
 }
-
-
-

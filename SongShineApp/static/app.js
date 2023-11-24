@@ -143,7 +143,28 @@ document.getElementById('topItemsButton').addEventListener('click', () => {
     fetch('http://localhost:8080/top_items')
         .then(response => response.json())
         .then(data => {
-            console.log('Top Items:', data);
+            console.log('Top Artists: ', data.top_items);
+            // console.log('Top Items:', data);
+            displayTopArtists(data.top_items)
         })
         .catch(error => console.error('Error fetching top items:', error));
 });
+
+function displayTopArtists(topArtists) {
+    const artistList = document.getElementById('artistList');
+    if (!artistList) {
+        console.error('Elemenet with id "artistList" not found');
+        return;
+    }
+    
+    artistList.innerHTML = '';
+
+    topArtists.slice(0, 10).forEach((artist, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('artist-item');
+
+        
+        listItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${artist.name}</span> (${artist.genres.join(', ')})`;
+        artistList.appendChild(listItem);
+    });
+}
