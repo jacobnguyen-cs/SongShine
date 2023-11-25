@@ -1,3 +1,6 @@
+let weatherData;
+let chosenGenre;
+
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOMContentLoaded fired")
 
@@ -68,9 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then(response => response.json())
                     .then(data => {
                         hideLoader();
-                        // const weatherCard = document.createElement("div");
-                        // weatherCard.classList.add("weather-card");
-
+                        weatherData = data;  // Storing weather data globally
+                        
                         const weatherCard = document.querySelector(".weather-card");
 
                         const locationText = document.querySelector(".default--vals.location");
@@ -145,25 +147,21 @@ document.getElementById('topItemsButton').addEventListener('click', () => {
         .then(data => {
             console.log('Top Artists: ', data.top_items);
             console.log('Top Genres:', data.top_genres);
-            // console.log('Top Items:', data);
-            displayTopArtists(data.top_items)
-            displayTopGenres(data.top_genres)
+            displayTopArtists(data.top_items);
+            displayTopGenres(data.top_genres, weatherData);
         })
         .catch(error => console.error('Error fetching top items:', error));
 });
 
-function displayTopGenres(topGenres) {
-    console.log('In displayTopGenres function.');
-
+function displayTopGenres(topGenres, weather) {
     const genreButtonsContainer = document.querySelector('.genre-btns');
     const songRecsContainer = document.querySelector('.song-recommendations');
     const songRecHeader = document.querySelector('.songRecHeader');
 
     const genreButtons = document.querySelectorAll('.gere-btns');
-    console.log("Genre buttons intitially:", genreButtons);
 
     const genreIntroText = document.getElementById('genreIntroText');
-
+    
     topGenres.forEach((genre, index) => {
         const button = genreButtons[index];
         if (button) {
@@ -172,23 +170,49 @@ function displayTopGenres(topGenres) {
         }
         
         button.addEventListener('click', () => {
-            console.log('Clicked a genre button');
+            chosenGenre = genre;
+            let condition = weatherData.current.condition.text;
+            let temp = weatherData.current.temp_f;
 
-            const songRecommendations = [`Song 1`, `Song 2`, `Song 3`, `Song 4`, `Song 5`];
-            const songList = document.querySelector('.song-list');
-            songList.innerHTML = '';
-            songRecommendations.forEach((song, index) => {
-                const songItem = document.createElement('li');
-                songItem.classList.add('artist-item');
-                songItem.textContent = song;
-                songItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${song}</span>`
-                songList.appendChild(songItem);
+            // Retrieving recommendations from chatgpt
+            const _data = {
+                genre: chosenGenre,
+                condition: condition,
+                temp: temp
+            };
+            
+            fetch('/get_recs', { 
+                method: 'POST',
+                body: JSON.stringify(_data),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error. Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const songRecommendationString = data.recommendations;
+                const parsedSongs = parseSongRecommendations(songRecommendationString);
+                const songList = document.querySelector('.song-list');
+                console.log("Parsed Songs:", parsedSongs);
+                songList.innerHTML = '';
+                parsedSongs.forEach((song, index) => {
+                    const songItem = document.createElement('li');
+                    songItem.classList.add('artist-item');
+                    songItem.textContent = song;
+                    songItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${song}</span>`
+                    songList.appendChild(songItem);
+                });
+                songRecsContainer.style.visibility = 'visible';
+                songRecsContainer.style.display = 'flex';
+                songRecsContainer.style.flexDirection = 'column';
+                songRecHeader.style.margin = '20px';
             });
-            songRecsContainer.style.visibility = 'visible';
-            songRecsContainer.style.display = 'flex';
-            songRecsContainer.style.flexDirection = 'column';
-            songRecHeader.style.margin = '20px';
-        })
+        });
     });
 
     genreIntroText.textContent = "Here are your favorite genres from the last 50 days. Select which genre of music you want recommendations for.";
@@ -197,8 +221,6 @@ function displayTopGenres(topGenres) {
 }
 
 function displayTopArtists(topArtists) {
-    console.log('In displayTopArtists function.');
-
     const artistList = document.getElementById('artistList');
     if (!artistList) {
         console.error('Elemenet with id "artistList" not found');
@@ -215,11 +237,19 @@ function displayTopArtists(topArtists) {
     });
 }
 
-// document.getElementById('getRecommendationsButton').addEventListener('click', () => {
-//     fetch('http://localhost:8080/get_recommendations')
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log('ChatGPT Recommendations:', data.recommendations);
-//         })
-//         .catch(error => console.error('Error fetching recommendations', error));
-// });
+function parseSongRecommendations(chatOutput) {
+    // Use regular expression to extract the song recommendations part
+    const regex = /1\. "(.+?)" by (.+?)\n2\. "(.+?)" by (.+?)\n3\. "(.+?)" by (.+?)\n4\. "(.+?)" by (.+?)\n5\. "(.+?)" by (.+?)/;
+    const match = chatOutput.match(regex);
+    if (match) {
+        // Extract individual song recommendations and artists
+        const songs = [];
+        for (let i = 1; i <= 10; i += 2) {
+            const song = `${match[i]} by ${match[i + 1]}`;
+            songs.push(song.trim());
+        }
+        return songs;
+    } else {
+        return null;
+    }
+}

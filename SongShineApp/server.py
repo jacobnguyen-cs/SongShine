@@ -2,7 +2,8 @@ from flask import Flask, jsonify, redirect, request, session, render_template, u
 from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime
-from collections import defaultdict, Counter
+from collections import Counter
+from openai import OpenAI
 
 import requests
 import os
@@ -19,11 +20,6 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = "http://localhost:8080/callback"
 
-# Debugging
-# print("Client ID:", os.getenv("CLIENT_ID"))
-# print("Client secret:", os.getenv("CLIENT_SECRET"))
-# print("OPENAI_API_KEY: ", os.getenv("OPENAI_API_KEY"))
-
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1"
@@ -32,10 +28,8 @@ API_BASE_URL = "https://api.spotify.com/v1"
 def index():
   if 'user_id' in session:
     user_id = session['user_id']
-    # print("USER ID:", user_id)
     return render_template('index.html', username=user_id)
   else:
-    # print("IN HERE")
     return render_template('index.html', username='Guest')
 
 @app.route('/login')
@@ -69,7 +63,6 @@ def callback():
 
     response = requests.post(TOKEN_URL, data=req_body)
     token_info = response.json()
-    # print("TOKEN INFO:", token_info)
 
     # Fetch user profile
     headers = {
@@ -77,7 +70,6 @@ def callback():
     }
     user_response = requests.get(API_BASE_URL + '/me', headers=headers)
     user_data = user_response.json()
-    print("USER DATA:\n", user_data)
 
     session['access_token'] = token_info['access_token']
     session['refresh_token'] = token_info['refresh_token']
@@ -137,6 +129,42 @@ def refresh_token():
     session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
 
     return redirect('/top_items')
+
+
+# OpenAI API section
+@app.route('/get_recs', methods=(["POST"]))
+def get_song_recommendations():
+  print('in get_song_recommendations')
+
+  data = request.get_json()
+  genre = data.get('genre')
+  condition = data.get('condition')
+  temp = data.get('temp')
+
+  recommendations = generate_song_recommendations(genre, condition, temp)
+  return(jsonify({'recommendations': recommendations}))
+
+def generate_song_recommendations(genre_preferences, weather_condition, temperature):
+  print("IN GENERATE_SONG_RECOMMENDATIONS")
+  
+  client = OpenAI()
+  client.api_key = os.getenv("OPENAI_API_KEY")
+  # openai.api_key = os.getenv("OPENAI_API_KEY")
+
+  # Make a request to the ChatGPT API
+  msgs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": f"I like listening to {genre_preferences} music. It is also currently {temperature} degrees fahrenheit and {weather_condition} where I am at. Can you recommend 5 songs based on this genre preference and the current weather? (No need for any introduction, just give me the top 5 list)"}
+  ]
+
+  bot = client.chat.completions.create(
+    model='gpt-3.5-turbo',
+    messages=msgs,
+  )
+
+  reply = bot.choices[0].message
+  print("GPT REPLY:\n", reply, "\n")
+  return reply.content
 
 if __name__ == "__main__":
   app.run(debug=True, port=8080)
