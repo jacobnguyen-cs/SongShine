@@ -223,13 +223,17 @@ function displayTopGenres(topGenres, weather) {
 function displayTopArtists(topArtists) {
     const artistList = document.getElementById('artistList');
     if (!artistList) {
-        console.error('Elemenet with id "artistList" not found');
+        console.error('Element with id "artistList" not found');
         return;
     }
     
     artistList.innerHTML = '';
 
     topArtists.slice(0, 10).forEach((artist, index) => {
+        // It was a good try
+        // const artistImage = document.createElement('img');
+        // artistImage.src = artist.images[0].url;
+
         const listItem = document.createElement('li');
         listItem.classList.add('artist-item');
         listItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${artist.name}</span> (${artist.genres.join(', ')})`;

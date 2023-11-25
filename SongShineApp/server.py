@@ -100,7 +100,8 @@ def get_top_items():
     top_items.append({
       "id": item["id"],
       "name": item["name"],
-      "genres": item["genres"]
+      "genres": item["genres"],
+      "images": item["images"]
     })
 
     genres.extend(item["genres"])
@@ -154,7 +155,7 @@ def generate_song_recommendations(genre_preferences, weather_condition, temperat
   # Make a request to the ChatGPT API
   msgs = [
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": f"I like listening to {genre_preferences} music. It is also currently {temperature} degrees fahrenheit and {weather_condition} where I am at. Can you recommend 5 songs based on this genre preference and the current weather? (No need for any introduction, just give me the top 5 list)"}
+    {"role": "user", "content": f"I like listening to {genre_preferences} music. It is also currently {temperature} degrees fahrenheit and {weather_condition} where I am at. Can you recommend 5 songs based on this genre preference and the current weather? (Format the list exactly like this: \"1. <song name 1> by <song artist 1>\n2. <song name 2> by <song artist 2>\" and so on)"}
   ]
 
   bot = client.chat.completions.create(
