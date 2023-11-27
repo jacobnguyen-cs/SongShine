@@ -153,14 +153,27 @@ document.getElementById('topItemsButton').addEventListener('click', () => {
         .catch(error => console.error('Error fetching top items:', error));
 });
 
+const loader2 = document.createElement("div");
+loader2.classList.add("loader");
+
+function showLoader2() {
+    const locateMeButton = document.querySelector(".genre-btns");
+    locateMeButton.insertAdjacentElement("afterend", loader2);
+}
+
+function hideLoader2() {
+    if (document.body.contains(loader2)) {
+        loader2.remove();
+    }
+}
+
 function displayTopGenres(topGenres, weather) {
     const genreButtonsContainer = document.querySelector('.genre-btns');
     const songRecsContainer = document.querySelector('.song-recommendations');
     const songRecHeader = document.querySelector('.songRecHeader');
-
     const genreButtons = document.querySelectorAll('.gere-btns');
-
     const genreIntroText = document.getElementById('genreIntroText');
+    const songList = document.querySelector('.song-list');
     
     topGenres.forEach((genre, index) => {
         const button = genreButtons[index];
@@ -170,6 +183,7 @@ function displayTopGenres(topGenres, weather) {
         }
         
         button.addEventListener('click', () => {
+            showLoader2();
             chosenGenre = genre;
             let condition = weatherData.current.condition.text;
             let temp = weatherData.current.temp_f;
@@ -181,7 +195,7 @@ function displayTopGenres(topGenres, weather) {
                 temp: temp
             };
             
-            fetch('/get_recs', { 
+            fetch('/get_recs', {
                 method: 'POST',
                 body: JSON.stringify(_data),
                 headers:{
@@ -195,9 +209,10 @@ function displayTopGenres(topGenres, weather) {
                 return response.json();
             })
             .then(data => {
+                hideLoader2();
                 const songRecommendationString = data.recommendations;
                 const parsedSongs = parseSongRecommendations(songRecommendationString);
-                const songList = document.querySelector('.song-list');
+                // const songList = document.querySelector('.song-list');
                 console.log("Parsed Songs:", parsedSongs);
                 songList.innerHTML = '';
                 parsedSongs.forEach((song, index) => {
