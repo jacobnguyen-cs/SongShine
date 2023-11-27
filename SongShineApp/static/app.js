@@ -243,7 +243,7 @@ function displayTopArtists(topArtists) {
 
 function parseSongRecommendations(chatOutput) {
     // Use regular expression to extract the song recommendations part
-    const regex = /1\. "(.+?)" by (.+?)\n2\. "(.+?)" by (.+?)\n3\. "(.+?)" by (.+?)\n4\. "(.+?)" by (.+?)\n5\. "(.+?)" by (.+?)/;
+    const regex = /1\. "(.+?)" by (.+?)\n2\. "(.+?)" by (.+?)\n3\. "(.+?)" by (.+?)\n4\. "(.+?)" by (.+?)\n5\. "(.+?)" by (.+?)\n/;
     const match = chatOutput.match(regex);
     if (match) {
         // Extract individual song recommendations and artists
