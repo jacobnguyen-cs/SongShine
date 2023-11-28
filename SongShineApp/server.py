@@ -24,6 +24,9 @@ AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1"
 
+top_items = []
+recommendations = {}
+
 @app.route('/')
 def index():
   if 'user_id' in session:
@@ -86,6 +89,8 @@ def get_top_items():
   if datetime.now().timestamp() > session['expires_at']:
     return redirect('/refresh-token')
   
+  global top_items
+  
   headers = {
     'Authorization' : f"Bearer {session['access_token']}"
   }
@@ -93,7 +98,6 @@ def get_top_items():
   response = requests.get(API_BASE_URL + '/me/top/artists?time_range=medium_term&limit=50', headers=headers)
   response = response.json()
 
-  top_items = []
   genres = []
 
   for item in response["items"]:
@@ -104,11 +108,57 @@ def get_top_items():
       "images": item["images"]
     })
 
-    genres.extend(item["genres"])
+  genres.extend(item["genres"])
   
   top_genres = [genre for genre, _ in Counter(genres).most_common(5)]
 
   return jsonify({ "top_items": top_items, "top_genres": top_genres })
+
+def get_recommendations(pref_genre):
+  global top_items
+  global recommendations
+
+  url = API_BASE_URL + '/recommendations?limit=50'
+  seed_artists = '&seed_artists='
+  seed_genres = '&seed_genres='
+  headers = {
+    'Authorization' : f"Bearer {session['access_token']}"
+  }
+
+  genre_map = {}
+  for item in top_items:
+    for genre in item['genres']:
+      genre_map[genre] = 1 + genre_map.get(genre, 0)
+
+  pref_artists = []
+  for item in top_items:
+    if pref_genre not in item['genres']:
+      continue
+    pref_artists.append(item['id'])
+
+  seed_genres += pref_genre
+
+  for i in range(len(pref_artists)):
+    if i == 3:
+      break
+    
+    seed_artists += pref_artists[i]
+    if i != len(pref_artists) - 1:
+      seed_artists += ','
+
+  url = url + seed_artists + seed_genres
+  response = requests.get(url, headers=headers)
+  response = response.json()
+
+  # for tracks in response['tracks']:
+  #   recommendations[(tracks['album']['name'] + ' by ' + tracks['album']['artists'][0]['name'])] = tracks['album']['artists'][0]['id']
+
+  recs = ""
+
+  for i, tracks in enumerate(response['tracks']):
+    recs += str(i + 1) + '. '+ tracks['album']['name'] + ' by ' + tracks['album']['artists'][0]['name'] + '\n'
+
+  return recs
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -135,6 +185,12 @@ def refresh_token():
 # OpenAI API section
 @app.route('/get_recs', methods=(["POST"]))
 def get_song_recommendations():
+  if 'access_token' not in session:
+    return redirect('/login')
+  
+  if datetime.now().timestamp() > session['expires_at']:
+    return redirect('/refresh-token')
+    
   print('in get_song_recommendations')
 
   data = request.get_json()
@@ -142,10 +198,12 @@ def get_song_recommendations():
   condition = data.get('condition')
   temp = data.get('temp')
 
-  recommendations = generate_song_recommendations(genre, condition, temp)
+  spotify_recs = get_recommendations(genre)
+  recommendations = generate_song_recommendations(spotify_recs, condition, temp)
+
   return(jsonify({'recommendations': recommendations}))
 
-def generate_song_recommendations(genre_preferences, weather_condition, temperature):
+def generate_song_recommendations(spotify_recs, weather_condition, temperature):
   print("IN GENERATE_SONG_RECOMMENDATIONS")
   
   client = OpenAI()
@@ -155,7 +213,7 @@ def generate_song_recommendations(genre_preferences, weather_condition, temperat
   # Make a request to the ChatGPT API
   msgs = [
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": f"I like listening to {genre_preferences} music. It is also currently {temperature} degrees fahrenheit and {weather_condition} where I am at. Can you recommend 5 songs based on this genre preference and the current weather? (Format the list exactly like this: \"1. <song name 1> by <song artist 1>\n2. <song name 2> by <song artist 2>\" and so on)"}
+    {"role": "user", "content": f"I like listening to these albums whic are listed in no particular order {spotify_recs}. It is also currently {temperature} degrees fahrenheit and {weather_condition} where I am at. Can you pick 5 songs from these albums based on the current weather? (Format the list exactly like this: \"1. <song name 1> by <song artist 1>\n2. <song name 2> by <song artist 2>\" and so on)"}
   ]
 
   bot = client.chat.completions.create(
