@@ -277,23 +277,6 @@ a{
   background-color:#ffffff;
 }
 
-.artist-item {
-  text-align: center;
-  margin-bottom: 10px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-}
-.artist-number {
-  margin-right: 10px;
-}
-.artist-name {
-  font-weight: bold;
-  font-size: 18px;
-  display: block;
-  margin-right:10px;
-}
-
 .section-divider {
   margin-top: 20px;
   border: none;
@@ -401,4 +384,37 @@ a{
     87% {
       box-shadow: .2em -.2em 0 0 currentcolor;
     }
+}
+
+.artist-card {
+  background-color: #535353;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content: flex-start;
+  gap:2rem;
+  min-width:500px;
+}
+.artist-image{
+  border-radius:10px;
+  height:160px;
+  width:160px;
+}
+.artist-info{
+  display:flex;
+  gap:1rem;
+  align-items:center;
+}
+.artist-number{
+  color:#1db954;
+  font-size:1.25rem;
+}
+.artist-name{
+  font-weight: 700;
+  font-size:1.3rem;
 }

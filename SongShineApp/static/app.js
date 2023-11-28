@@ -115,13 +115,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const aboutLink = document.querySelector(".navbar--link.about");
     aboutLink.addEventListener("click", function () {
-        const aboutContent = "SongShine is a weather-based music recommender application. Given the current weather (sunny, gloomy, hot, cold, etc.) and a specified genre, our application will recommend 5 songs. The application will take into account components of your Spotify account, including top artists from the last month, top tracks from the last month, and contents in your playlists.";
+        const aboutContent = "SongShine is a weather-based music recommender application. Given the current weather (sunny, gloomy, hot, cold, etc.) and a specified genre, our application will recommend 5 songs. <br><br> The application will take into account components of your Spotify account, including top artists from the last month, top tracks from the last month, and contents in your playlists.";
         openPopup("About", aboutContent);
     });
 
     const apisLink = document.querySelector(".navbar--link.apis");
     apisLink.addEventListener("click", function () {
-        const apisContent = "Three APIs were used to build this application. The first - a weather API was used to find the precise geolocation for a given user and based on that information, output and store the current temperature, what temperature it feels like, and a general weather condition for this location. The second API we used was a Spotify API to track the logged in user's account information including their account name, top artists from the last 50 days, and top genres based on their top artists. The final API that we used was a ChatGPT API. This allowed us to take the learned information of the weather in the user's current location, pair that with a specified genre, and ultimately recommend a list of songs that the user will hopefully enjoy.";
+        const apisContent = "Three APIs were used to build this application. <br><br> The first - a weather API was used to find the precise geolocation for a given user and based on that information, output and store the current temperature, what temperature it feels like, and a general weather condition for this location.  <br><br> The second API we used was a Spotify API to track the logged in user's account information including their account name, top artists from the last 50 days, and top genres based on their top artists. <br><br> The final API that we used was a ChatGPT API. This allowed us to take the learned information of the weather in the user's current location, pair that with a specified genre, and ultimately recommend a list of songs that the user will hopefully enjoy.";
         openPopup("APIs", apisContent);
     });
 
@@ -245,14 +245,22 @@ function displayTopArtists(topArtists) {
     artistList.innerHTML = '';
 
     topArtists.slice(0, 10).forEach((artist, index) => {
-        // It was a good try
-        // const artistImage = document.createElement('img');
-        // artistImage.src = artist.images[0].url;
+        const artistCard = document.createElement('div');
+        artistCard.classList.add('artist-card');
 
-        const listItem = document.createElement('li');
-        listItem.classList.add('artist-item');
-        listItem.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${artist.name}</span> (${artist.genres.join(', ')})`;
-        artistList.appendChild(listItem);
+        const artistImage = document.createElement('img');
+        artistImage.src = artist.images[1].url;
+        artistImage.classList.add('artist-image');
+
+        const artistInfo = document.createElement('div');
+        artistInfo.classList.add('artist-info');
+
+        artistInfo.innerHTML = `<span class="artist-number">${index + 1}.</span> <span class="artist-name">${artist.name}</span> (${artist.genres.join(', ')})`;
+
+        artistCard.appendChild(artistImage);
+        artistCard.appendChild(artistInfo);
+
+        artistList.appendChild(artistCard);
     });
 }
 
