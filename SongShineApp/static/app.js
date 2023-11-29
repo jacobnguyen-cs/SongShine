@@ -216,6 +216,12 @@ function displayTopGenres(topGenres, weather) {
                 console.log("Parsed Songs:", parsedSongs);
                 songList.innerHTML = '';
                 parsedSongs.forEach((song, index) => {
+                    fetch(`/get_uri?song=${song}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Track data: ', data.track_data, 'Artist Data: ', data.artist_data);
+                        })
+                        .catch(error => console.error('Error while fetching song data: ', error));
                     const songItem = document.createElement('li');
                     songItem.classList.add('artist-item');
                     songItem.textContent = song;
@@ -230,7 +236,7 @@ function displayTopGenres(topGenres, weather) {
         });
     });
 
-    genreIntroText.textContent = "Here are your favorite genres from the last 50 days. Select which genre of music you want recommendations for.";
+    genreIntroText.textContent = "Here are your favorite genres from the last 6 months. Select which genre of music you want recommendations for.";
     genreButtonsContainer.style.visibility = 'visible';
     genreButtonsContainer.style.display = 'flex';
 }
