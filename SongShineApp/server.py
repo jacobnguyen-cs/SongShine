@@ -26,8 +26,6 @@ API_BASE_URL = "https://api.spotify.com/v1"
 
 top_items = []
 recommendations = {}
-track_map = {}
-artist_map = {}
 
 @app.route('/')
 def index():
@@ -119,8 +117,6 @@ def get_top_items():
 def get_recommendations(pref_genre):
   global top_items
   global recommendations
-  global artist_map
-  global track_map
 
   url = API_BASE_URL + '/recommendations?limit=50'
   seed_artists = '&seed_artists='
@@ -134,7 +130,6 @@ def get_recommendations(pref_genre):
     for genre in item['genres']:
       genre_map[genre] = 1 + genre_map.get(genre, 0)
 
-  # pref_genre = 'bedroom pop'
   pref_artists = []
   for item in top_items:
     if pref_genre not in item['genres']:
@@ -155,81 +150,15 @@ def get_recommendations(pref_genre):
   response = requests.get(url, headers=headers)
   response = response.json()
 
-  generate_artist_map(response)
-  generate_track_map(response)
-
-  recs = ""
-  for i, albums in enumerate(response['tracks']):
-    recs += str(i + 1) + '. '+ albums['album']['name'] + ' by ' + albums['album']['artists'][0]['name'] + '\n'
-
   # for tracks in response['tracks']:
   #   recommendations[(tracks['album']['name'] + ' by ' + tracks['album']['artists'][0]['name'])] = tracks['album']['artists'][0]['id']
 
+  recs = ""
+
+  for i, tracks in enumerate(response['tracks']):
+    recs += str(i + 1) + '. '+ tracks['album']['name'] + ' by ' + tracks['album']['artists'][0]['name'] + '\n'
+
   return recs
-
-def generate_artist_map(json):
-  global artist_map
-
-  for album in json['tracks']:
-    artist_name = album['album']['artists'][0]['name']
-    artist_id = album['album']['artists'][0]['id']
-    artist_uri = album['album']['artists'][0]['uri']
-
-    if artist_name in artist_map:
-      continue
-
-    artist_map[artist_name] = {
-      'artist_id': artist_id,
-      'artist_uri': artist_uri
-    }
-
-def generate_track_map(json):
-  global track_map
-
-  for album in json['tracks']:
-    album_id = album['album']['id']
-    album_name = album['album']['name']
-    album_image = album['album']['images'][0]['url']
-
-    if album_name in track_map:
-      continue
-
-    url = API_BASE_URL + '/albums/' + album_id
-    headers = {
-      'Authorization' : f"Bearer {session['access_token']}"
-    }
-    album_response = requests.get(url, headers=headers)
-    album_response = album_response.json()
-    
-    artist_name = album_response['artists'][0]['name']
-    for track in album_response['tracks']['items']:
-      track_name = track['name']
-      track_id = track['id']
-      track_uri = track['uri']
-      
-      track_map[track_name] = {
-        'track_id': track_id,
-        'track_uri': track_uri,
-        'track_image': album_image,
-        'artist_name': artist_name
-      }
-
-@app.route('/get_uri')
-def get_uri():
-  args = request.args
-
-  song_str = args['song']
-  song_str = song_str.split(' by ')
-
-  song = song_str[0]
-  artist = song_str[1]
-
-  for track in track_map:
-    if track['artist_name'] == artist:
-      song = track
-      break
-
-  return jsonify({'track_data': song, 'artist_data': artist_map[artist]})
 
 @app.route('/refresh-token')
 def refresh_token():
