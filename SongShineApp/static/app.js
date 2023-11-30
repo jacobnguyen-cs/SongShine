@@ -168,6 +168,7 @@ function hideLoader2() {
 }
 
 function displayTopGenres(topGenres, weather) {
+    console.log("In displayTopGenres");
     const genreButtonsContainer = document.querySelector('.genre-btns');
     const songRecsContainer = document.querySelector('.song-recommendations');
     const songRecHeader = document.querySelector('.songRecHeader');
@@ -183,6 +184,7 @@ function displayTopGenres(topGenres, weather) {
         }
         
         button.addEventListener('click', () => {
+            console.log("Button clicked");
             showLoader2();
             chosenGenre = genre;
             let condition = weatherData.current.condition.text;
@@ -203,6 +205,7 @@ function displayTopGenres(topGenres, weather) {
                 }
             })
             .then(response => {
+                console.log("in .then(response =>)");
                 if (!response.ok) {
                     throw new Error(`HTTP error. Status: ${response.status}`);
                 }
@@ -210,6 +213,7 @@ function displayTopGenres(topGenres, weather) {
             })
             .then(data => {
                 hideLoader2();
+                console.log("In then(data =>");
                 const songRecommendationString = data.recommendations;
                 const parsedSongs = parseSongRecommendations(songRecommendationString);
                 // const songList = document.querySelector('.song-list');
