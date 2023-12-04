@@ -1,4 +1,6 @@
-\# SongShine
+# SongShine
+## Video
+https://drive.google.com/file/d/12x17uzGxLWbtjEEfTPssE8hv9Rj30-jm/view?usp=drive_link
 ## How to Run
 ```
 cd SongShineApp
